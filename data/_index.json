@@ -1,0 +1,30 @@
+{
+  "lastUpdated": "2026-04-04",
+  "totalCompanies": 15,
+  "rounds": [
+    { "id": "oa",         "label": "Online Assessment" },
+    { "id": "java",       "label": "Java Deep Dive" },
+    { "id": "dsa",        "label": "DSA / Coding" },
+    { "id": "lld",        "label": "Low Level Design" },
+    { "id": "system",     "label": "System Design" },
+    { "id": "behavioral", "label": "Behavioral" },
+    { "id": "hm",         "label": "Hiring Manager" }
+  ],
+  "companies": [
+    { "id": "morgan-stanley",  "displayName": "Morgan Stanley",       "tier": "T1", "ctcRange": "₹28–42L",    "domain": "Finance",              "status": "ready" },
+    { "id": "goldman-sachs",   "displayName": "Goldman Sachs",        "tier": "T1", "ctcRange": "₹24–44L",    "domain": "Finance",              "status": "pending" },
+    { "id": "jpmorgan-chase",  "displayName": "JPMorgan Chase",       "tier": "T1", "ctcRange": "₹28–42L",    "domain": "Finance",              "status": "pending" },
+    { "id": "visa-mastercard", "displayName": "Visa / Mastercard",    "tier": "T1", "ctcRange": "₹26–40L",    "domain": "Payments",             "status": "pending" },
+    { "id": "deutsche-citi",   "displayName": "Deutsche Bank / Citi", "tier": "T1", "ctcRange": "₹24–38L",    "domain": "Finance",              "status": "pending" },
+    { "id": "razorpay",        "displayName": "Razorpay",             "tier": "T2", "ctcRange": "₹30–46L TC", "domain": "Fintech",              "status": "pending" },
+    { "id": "phonepe-cred",    "displayName": "PhonePe / CRED",       "tier": "T2", "ctcRange": "₹32–50L TC", "domain": "Fintech",              "status": "pending" },
+    { "id": "amex",            "displayName": "American Express",     "tier": "T2", "ctcRange": "₹25–34L",    "domain": "Payments",             "status": "pending" },
+    { "id": "tata-digital",    "displayName": "Tata Digital",         "tier": "T2", "ctcRange": "₹25–38L",    "domain": "Super App",            "status": "pending" },
+    { "id": "bny-mellon",      "displayName": "BNY Mellon",           "tier": "T2", "ctcRange": "₹23–32L",    "domain": "Finance / Custody",    "status": "pending" },
+    { "id": "atlassian",       "displayName": "Atlassian",            "tier": "T3", "ctcRange": "₹55–75L TC", "domain": "Dev Tools",            "status": "pending" },
+    { "id": "stripe",          "displayName": "Stripe",               "tier": "T3", "ctcRange": "₹64–90L TC", "domain": "Payments Infra",       "status": "pending" },
+    { "id": "gitlab",          "displayName": "GitLab",               "tier": "T3", "ctcRange": "₹40–70L TC", "domain": "Dev Tools / Remote",   "status": "pending" },
+    { "id": "groww",           "displayName": "Groww",                "tier": "T3", "ctcRange": "₹28–46L",    "domain": "Fintech / Trading",    "status": "pending" },
+    { "id": "zerodha",         "displayName": "Zerodha",              "tier": "T3", "ctcRange": "₹32–46L",    "domain": "Fintech / Trading",    "status": "pending" }
+  ]
+}
