@@ -1,531 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Interview Prep Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --bg:        #1c2333;
-  --bg-card:   #232d42;
-  --bg-raised: #2a3550;
-  --bg-deep:   #17202f;
-  --border:    #2e3d58;
-  --border-hi: #3d5080;
-  --gold:      #c9a84c;
-  --gold-lt:   #e8c97a;
-  --gold-dim:  #7a5e24;
-  --text-1:    #e8edf5;
-  --text-2:    #8fa3c8;
-  --text-3:    #4f6490;
-  --green:     #3db87a;
-  --amber:     #e0953a;
-  --red:       #d95f5f;
-  --blue:      #5b9bd5;
-  --purple:    #8b7fd4;
-  --radius:    8px;
-  --radius-lg: 12px;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text-1); min-height:100vh; font-size:14px; line-height:1.6; }
-
-/* ── Top Nav ── */
-.topnav {
-  background:var(--bg-deep); border-bottom:1px solid var(--border);
-  padding:0 32px; display:flex; align-items:center; justify-content:space-between;
-  height:54px; position:sticky; top:0; z-index:200;
-  box-shadow:0 2px 20px rgba(0,0,0,0.4);
-}
-.nav-logo { font-family:'Playfair Display',serif; font-size:18px; color:var(--gold); letter-spacing:-0.01em; }
-.nav-logo span { color:var(--text-2); font-size:13px; font-family:'DM Sans',sans-serif; font-weight:400; margin-left:10px; }
-.nav-right { display:flex; align-items:center; gap:12px; }
-.quiz-btn {
-  font-family:'DM Mono',monospace; font-size:11px; padding:6px 14px;
-  border-radius:var(--radius); border:1px solid var(--border-hi);
-  background:transparent; color:var(--text-2); cursor:pointer; transition:all 0.18s;
-}
-.quiz-btn:hover,.quiz-btn.active { border-color:var(--gold); color:var(--gold); background:rgba(201,168,76,0.08); }
-
-/* ── Company Sidebar ── */
-.layout { display:flex; height:calc(100vh - 54px); }
-.sidebar {
-  width:240px; flex-shrink:0;
-  background:var(--bg-deep); border-right:1px solid var(--border);
-  overflow-y:auto; padding:16px 0;
-  scrollbar-width:thin; scrollbar-color:var(--border) transparent;
-}
-.sidebar-section { padding:0 16px; margin-bottom:6px; }
-.sidebar-label { font-size:10px; font-weight:600; letter-spacing:0.1em; color:var(--text-3); text-transform:uppercase; padding:8px 16px 4px; }
-.company-btn {
-  width:100%; background:none; border:none; padding:9px 16px;
-  display:flex; align-items:center; gap:10px;
-  cursor:pointer; text-align:left; border-radius:0;
-  transition:background 0.12s; color:var(--text-2);
-}
-.company-btn:hover { background:rgba(255,255,255,0.03); }
-.company-btn.active { background:rgba(201,168,76,0.08); color:var(--gold); }
-.company-btn.active .co-name { color:var(--gold); }
-.co-name { font-size:13px; font-weight:500; flex:1; }
-.co-tier {
-  font-size:9px; font-weight:600; letter-spacing:0.06em;
-  padding:1px 5px; border-radius:3px;
-}
-.t1 { background:rgba(201,168,76,0.15); color:var(--gold); border:1px solid rgba(201,168,76,0.3); }
-.t2 { background:rgba(91,155,213,0.15); color:#7eb8e8; border:1px solid rgba(91,155,213,0.3); }
-.t3 { background:rgba(61,184,122,0.15); color:#5dce96; border:1px solid rgba(61,184,122,0.3); }
-.co-status { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-.status-ready   { background:var(--green); }
-.status-pending { background:var(--border-hi); }
-
-/* ── Main Panel ── */
-.main { flex:1; overflow-y:auto; }
-
-/* Loading / Empty */
-.state-msg { display:flex; flex-direction:column; align-items:center; justify-content:center; height:60vh; gap:12px; color:var(--text-3); }
-.state-msg h2 { font-family:'Playfair Display',serif; font-size:22px; color:var(--text-2); }
-.state-msg p  { font-size:13px; }
-
-/* ── Company Header ── */
-.co-header { background:var(--bg-deep); border-bottom:1px solid var(--border); padding:0 32px; }
-.co-header-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 0 10px; gap:16px; flex-wrap:wrap; }
-.co-title-block { display:flex; align-items:center; gap:14px; }
-.co-icon { width:42px; height:42px; background:var(--bg-raised); border:1px solid var(--gold-dim); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:18px; }
-.co-title { font-family:'Playfair Display',serif; font-size:20px; }
-.co-meta { display:flex; align-items:center; gap:10px; margin-top:3px; flex-wrap:wrap; }
-.meta-txt { font-size:12px; color:var(--text-2); }
-.ctc-pill { font-size:11px; font-weight:500; padding:2px 9px; border-radius:3px; background:rgba(201,168,76,0.08); color:var(--gold-lt); border:1px solid rgba(201,168,76,0.2); }
-.edge-strip { padding:8px 0 10px; font-size:12px; color:var(--gold); border-top:1px solid var(--border); opacity:0.85; }
-.edge-strip::before { content:'◆  '; font-size:8px; }
-
-/* ── Round Tabs ── */
-.round-tabs { background:var(--bg-deep); border-bottom:1px solid var(--border); padding:0 32px; display:flex; gap:0; overflow-x:auto; scrollbar-width:none; }
-.round-tabs::-webkit-scrollbar { display:none; }
-.rtab {
-  background:none; border:none; border-bottom:2px solid transparent;
-  color:var(--text-3); padding:12px 18px; font-family:'DM Sans',sans-serif;
-  font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap;
-  transition:all 0.15s; display:flex; align-items:center; gap:7px;
-}
-.rtab:hover { color:var(--text-2); }
-.rtab.active { color:var(--gold); border-bottom-color:var(--gold); }
-.rtab-count { font-size:10px; padding:1px 5px; border-radius:10px; background:var(--bg-raised); color:var(--text-3); font-family:'DM Mono',monospace; }
-.rtab.active .rtab-count { background:rgba(201,168,76,0.15); color:var(--gold); }
-
-/* ── Round Content ── */
-.round-content { max-width:860px; margin:0 auto; padding:24px 32px 60px; }
-
-.round-overview { background:var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--gold-dim); border-radius:var(--radius-lg); padding:16px 20px; margin-bottom:20px; }
-.overview-txt { font-size:13px; color:var(--text-2); line-height:1.65; margin-bottom:12px; }
-.tips-wrap { display:flex; flex-wrap:wrap; gap:7px; }
-.tip-chip { font-size:11px; padding:4px 10px; background:rgba(91,155,213,0.07); border:1px solid rgba(91,155,213,0.18); border-radius:4px; color:#7eb8e8; line-height:1.5; }
-.tip-chip::before { content:'→ '; opacity:0.55; }
-
-.toolbar { display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; align-items:center; }
-.search-box { flex:1; min-width:200px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:8px 13px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text-1); outline:none; transition:border-color 0.15s; }
-.search-box:focus { border-color:var(--border-hi); }
-.search-box::placeholder { color:var(--text-3); }
-.quiz-prog { font-size:11px; color:var(--text-3); font-family:'DM Mono',monospace; padding:8px 0; }
-
-.tag-bar { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; }
-.tag-chip { font-size:11px; font-family:'DM Mono',monospace; padding:3px 9px; border-radius:4px; border:1px solid var(--border); background:transparent; color:var(--text-3); cursor:pointer; transition:all 0.15s; }
-.tag-chip:hover { border-color:var(--border-hi); color:var(--text-2); }
-.tag-chip.active { border-color:var(--gold-dim); background:rgba(201,168,76,0.08); color:var(--gold); }
-
-/* ── Question Cards ── */
-.q-list { display:flex; flex-direction:column; gap:9px; }
-.q-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; transition:border-color 0.15s; }
-.q-card.open { border-color:var(--border-hi); }
-.q-hdr { width:100%; background:none; border:none; padding:13px 17px; display:flex; align-items:center; gap:12px; cursor:pointer; text-align:left; transition:background 0.12s; }
-.q-hdr:hover { background:rgba(255,255,255,0.02); }
-.q-num { font-family:'DM Mono',monospace; font-size:11px; color:var(--text-3); min-width:26px; }
-.q-info { flex:1; min-width:0; }
-.q-topic { font-size:14px; font-weight:500; color:var(--text-1); margin-bottom:4px; }
-.q-badges { display:flex; flex-wrap:wrap; gap:5px; }
-.diff { font-size:10px; font-family:'DM Mono',monospace; padding:1px 6px; border-radius:3px; }
-.diff-easy   { background:rgba(61,184,122,0.1); color:#5dce96; border:1px solid rgba(61,184,122,0.25); }
-.diff-medium { background:rgba(224,149,58,0.1); color:#e8aa62; border:1px solid rgba(224,149,58,0.25); }
-.diff-hard   { background:rgba(217,95,95,0.1); color:#e07878; border:1px solid rgba(217,95,95,0.25); }
-.diff-na     { background:rgba(79,100,144,0.12); color:var(--text-3); border:1px solid var(--border); }
-.tag-inline  { font-size:10px; font-family:'DM Mono',monospace; padding:1px 6px; border-radius:3px; background:var(--bg-raised); color:var(--text-3); border:1px solid var(--border); }
-.q-chev { color:var(--text-3); font-size:11px; flex-shrink:0; transition:transform 0.2s; }
-.q-card.open .q-chev { transform:rotate(180deg); }
-
-.q-body { padding:0 17px 17px; border-top:1px solid var(--border); display:none; }
-.q-card.open .q-body { display:block; }
-
-.sec-label { font-family:'DM Mono',monospace; font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; margin:13px 0 6px; }
-.lbl-q { color:var(--text-3); }
-.lbl-a { color:var(--blue); }
-.lbl-p { color:var(--purple); }
-.lbl-c { color:var(--green); }
-.lbl-f { color:var(--amber); }
-.lbl-n { color:var(--gold); }
-
-.code-block { background:var(--bg-deep); border:1px solid var(--border); border-radius:var(--radius); padding:12px 15px; font-family:'DM Mono',monospace; font-size:12px; line-height:1.75; white-space:pre-wrap; overflow-x:auto; color:var(--text-2); }
-.ans-block  { color:#b8cce4; border-left:2px solid rgba(91,155,213,0.4); }
-.java-block { color:#a3d9a5; background:#182418; border-color:rgba(61,184,122,0.2); border-left:2px solid rgba(61,184,122,0.5); }
-.pseudo-block { color:#c4b5f7; background:#1e1a2e; border-color:rgba(139,127,212,0.2); border-left:2px solid rgba(139,127,212,0.5); }
-
-.code-toggle { font-family:'DM Mono',monospace; font-size:11px; padding:4px 12px; border-radius:var(--radius); border:1px solid rgba(61,184,122,0.25); background:rgba(61,184,122,0.05); color:#5dce96; cursor:pointer; transition:all 0.15s; margin-top:9px; }
-.code-toggle:hover { background:rgba(61,184,122,0.1); border-color:rgba(61,184,122,0.45); }
-
-.fu-block { background:rgba(224,149,58,0.05); border:1px solid rgba(224,149,58,0.18); border-radius:var(--radius); padding:11px 13px; }
-.fu-item { font-size:12px; color:#c49a5a; padding:2px 0; display:flex; gap:7px; }
-.fu-item::before { content:'→'; opacity:0.45; flex-shrink:0; }
-
-.note-block { background:rgba(201,168,76,0.05); border:1px solid rgba(201,168,76,0.2); border-radius:var(--radius); padding:9px 13px; font-size:12px; color:#c9a84c; display:flex; gap:7px; align-items:flex-start; line-height:1.5; }
-.note-block::before { content:'📌'; flex-shrink:0; }
-
-.reveal-btn { width:100%; margin-top:11px; background:var(--bg-raised); border:1px dashed var(--border-hi); border-radius:var(--radius); padding:10px; color:var(--text-3); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; transition:all 0.15s; }
-.reveal-btn:hover { border-color:var(--gold-dim); color:var(--gold); }
-
-/* ── Stats ── */
-.stats-bar { display:flex; gap:22px; flex-wrap:wrap; padding:14px 0; border-top:1px solid var(--border); margin-top:32px; }
-.stat-val { font-family:'DM Mono',monospace; font-size:18px; font-weight:500; color:var(--gold); }
-.stat-lbl { font-size:11px; color:var(--text-3); letter-spacing:0.04em; margin-top:2px; }
-
-/* ── Empty / Pending ── */
-.empty-q { text-align:center; color:var(--text-3); padding:40px 0; font-size:13px; }
-
-/* ── Animations ── */
-@keyframes fadeUp { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
-.animate { animation:fadeUp 0.18s ease; }
-
-::-webkit-scrollbar { width:6px; height:6px; }
-::-webkit-scrollbar-track { background:var(--bg-deep); }
-::-webkit-scrollbar-thumb { background:var(--border-hi); border-radius:3px; }
-</style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Interview Prep Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root {--bg: #1c2333; --bg-card: #232d42; --bg-raised: #2a3550; --bg-deep: #17202f; --border: #2e3d58; --border-hi: #3d5080; --gold: #c9a84c; --gold-lt: #e8c97a; --gold-dim: #7a5e24; --text-1: #e8edf5; --text-2: #8fa3c8; --text-3: #4f6490; --green: #3db87a; --amber: #e0953a; --red: #d95f5f; --blue: #5b9bd5; --purple: #8b7fd4; --radius: 8px; --radius-lg: 12px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text-1); min-height:100vh; font-size:14px; line-height:1.6; }
+        .topnav {background:var(--bg-deep); border-bottom:1px solid var(--border); padding:0 32px; display:flex; align-items:center; justify-content:space-between; height:54px; position:sticky; top:0; z-index:200; box-shadow:0 2px 20px rgba(0,0,0,0.4); }
+        .nav-logo { font-family:'Playfair Display',serif; font-size:18px; color:var(--gold); letter-spacing:-0.01em; }
+        .nav-logo span { color:var(--text-2); font-size:13px; font-family:'DM Sans',sans-serif; font-weight:400; margin-left:10px; }
+        .nav-right { display:flex; align-items:center; gap:12px; }
+        .quiz-btn {font-family:'DM Mono',monospace; font-size:11px; padding:6px 14px; border-radius:var(--radius); border:1px solid var(--border-hi); background:transparent; color:var(--text-2); cursor:pointer; transition:all 0.18s; }
+        .quiz-btn:hover,.quiz-btn.active { border-color:var(--gold); color:var(--gold); background:rgba(201,168,76,0.08); }
+        .layout { display:flex; height:calc(100vh - 54px); }
+        .sidebar {width:240px; flex-shrink:0; background:var(--bg-deep); border-right:1px solid var(--border); overflow-y:auto; padding:16px 0; }
+        .sidebar-label { font-size:10px; font-weight:600; letter-spacing:0.1em; color:var(--text-3); text-transform:uppercase; padding:8px 16px 4px; }
+        .company-btn {width:100%; background:none; border:none; padding:9px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; text-align:left; color:var(--text-2); }
+        .company-btn:hover { background:rgba(255,255,255,0.03); }
+        .company-btn.active { background:rgba(201,168,76,0.08); color:var(--gold); }
+        .co-name { font-size:13px; font-weight:500; flex:1; }
+        .co-tier {font-size:9px; font-weight:600; padding:1px 5px; border-radius:3px; }
+        .t1 { background:rgba(201,168,76,0.15); color:var(--gold); border:1px solid rgba(201,168,76,0.3); }
+        .t2 { background:rgba(91,155,213,0.15); color:#7eb8e8; border:1px solid rgba(91,155,213,0.3); }
+        .t3 { background:rgba(61,184,122,0.15); color:#5dce96; border:1px solid rgba(61,184,122,0.3); }
+        .co-status { width:7px; height:7px; border-radius:50%; }
+        .status-ready { background:var(--green); }
+        .status-pending { background:var(--border-hi); }
+        .main { flex:1; overflow-y:auto; }
+        .state-msg { display:flex; flex-direction:column; align-items:center; justify-content:center; height:60vh; gap:12px; color:var(--text-3); }
+        .co-header { background:var(--bg-deep); border-bottom:1px solid var(--border); padding:0 32px; }
+        .co-header-inner { display:flex; align-items:center; justify-content:space-between; padding:16px 0 10px; }
+        .co-title { font-family:'Playfair Display',serif; font-size:20px; }
+        .round-tabs { background:var(--bg-deep); border-bottom:1px solid var(--border); padding:0 32px; display:flex; }
+        .rtab {background:none; border:none; border-bottom:2px solid transparent; color:var(--text-3); padding:12px 18px; cursor:pointer; }
+        .rtab.active { color:var(--gold); border-bottom-color:var(--gold); }
+        .round-content { max-width:860px; margin:0 auto; padding:24px 32px 60px; }
+        .q-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); margin-bottom:9px; overflow:hidden; }
+        .q-hdr { width:100%; background:none; border:none; padding:13px 17px; display:flex; align-items:center; gap:12px; cursor:pointer; text-align:left; color:var(--text-1); }
+        .q-body { padding:0 17px 17px; border-top:1px solid var(--border); }
+        .code-block { background:var(--bg-deep); border:1px solid var(--border); padding:12px; font-family:'DM Mono',monospace; white-space:pre-wrap; color:var(--text-2); margin-top:5px;}
+        .reveal-btn { width:100%; margin-top:11px; background:var(--bg-raised); border:1px dashed var(--border-hi); padding:10px; color:var(--gold); cursor:pointer; }
+    </style>
 </head>
 <body>
-
-<!-- Top Nav -->
-<div class="topnav">
-  <div class="nav-logo">Interview Prep <span>SDE 2 · Java Backend</span></div>
-  <div class="nav-right">
-    <span id="navQuizCount" style="font-size:11px;color:var(--text-3);font-family:'DM Mono',monospace;display:none"></span>
-    <button class="quiz-btn" id="quizBtn" onclick="toggleQuiz()">○ Quiz Mode</button>
-  </div>
-</div>
-
-<div class="layout">
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-label">Companies</div>
-    <div id="companyList"></div>
-  </div>
-
-  <!-- Main -->
-  <div class="main" id="mainPanel">
-    <div class="state-msg" id="welcomeMsg">
-      <h2>Select a Company</h2>
-      <p>Choose a company from the sidebar to start your prep session.</p>
-    </div>
-    <div id="companyView" style="display:none"></div>
-  </div>
-</div>
-
-<script>
-// ── State ──
-let index        = null;
-let activeCompId = null;
-let activeData   = null;
-let activeRound  = null;
-let quizMode     = false;
-let searchVal    = "";
-let activeTag    = null;
-let expandedId   = null;
-let revealedSet  = new Set();
-let codeOpenSet  = new Set();
-const cache      = {};
-
-// ── Bootstrap ──
-async function init() {
-  try {
-    const res = await fetch('./data/_index.json');
-    index = await res.json();
-    buildSidebar();
-  } catch(e) {
-    document.getElementById("welcomeMsg").innerHTML =
-      `<h2>Load Error</h2><p style="color:var(--red)">Could not load _index.json. Make sure you're running via a local server.</p>`;
-  }
-}
-
-function buildSidebar() {
-  const tiers = ["T1","T2","T3"];
-  const html = tiers.map(tier => {
-    const cos = index.companies.filter(c => c.tier === tier);
-    return `<div class="sidebar-label">${tier} — ${tier==="T1"?"Finance":"tier==="T2"?"Fintech / Product":"Global / Remote"}"}</div>` +
-      cos.map(c => `
-        <button class="company-btn" id="cbtn-${c.id}" onclick="selectCompany('${c.id}')">
-          <span class="co-status status-${c.status||'pending'}"></span>
-          <span class="co-name">${c.displayName}</span>
-          <span class="co-tier ${c.tier.toLowerCase()}">${c.tier}</span>
-        </button>`).join("");
-  });
-
-  // simpler rebuild without template literal bug
-  let out = "";
-  ["T1","T2","T3"].forEach(tier => {
-    const labels = {"T1":"Finance","T2":"Fintech / Product","T3":"Global / Remote"};
-    out += `<div class="sidebar-label">${labels[tier]}</div>`;
-    index.companies.filter(c=>c.tier===tier).forEach(c => {
-      out += `<button class="company-btn" id="cbtn-${c.id}" onclick="selectCompany('${c.id}')">
-        <span class="co-status status-${c.status||'pending'}"></span>
-        <span class="co-name">${esc(c.displayName)}</span>
-        <span class="co-tier ${c.tier.toLowerCase()}">${c.tier}</span>
-      </button>`;
-    });
-  });
-  document.getElementById("companyList").innerHTML = out;
-}
-
-async function selectCompany(id) {
-  // Sidebar highlight
-  document.querySelectorAll(".company-btn").forEach(b=>b.classList.remove("active"));
-  document.getElementById("cbtn-"+id)?.classList.add("active");
-
-  const meta = index.companies.find(c=>c.id===id);
-  if (meta?.status === "pending") {
-    document.getElementById("welcomeMsg").style.display = "flex";
-    document.getElementById("welcomeMsg").innerHTML =
-      `<h2>${esc(meta.displayName)}</h2><p style="color:var(--text-3)">Data not yet generated for this company.<br>Run a new Claude session to add it.</p>`;
-    document.getElementById("companyView").style.display = "none";
-    return;
-  }
-
-  // Load data
-  if (!cache[id]) {
-    try {
-      const res = await fetch(`./data/${id}.json`);
-      cache[id] = await res.json();
-    } catch(e) {
-      document.getElementById("welcomeMsg").innerHTML =
-        `<h2>Error</h2><p style="color:var(--red)">Could not load ${id}.json</p>`;
-      return;
-    }
-  }
-
-  activeCompId = id;
-  activeData   = cache[id];
-  activeRound  = activeData.activeRounds ? activeData.activeRounds[0] : activeData.rounds[0].id;
-  resetRoundState();
-
-  document.getElementById("welcomeMsg").style.display = "none";
-  document.getElementById("companyView").style.display = "block";
-  renderCompany();
-}
-
-function resetRoundState() {
-  expandedId  = null;
-  revealedSet = new Set();
-  codeOpenSet = new Set();
-  searchVal   = "";
-  activeTag   = null;
-}
-
-function renderCompany() {
-  const d = activeData;
-  const round = d.rounds.find(r=>r.id===activeRound) || d.rounds[0];
-
-  const tierClass = d.tier?.toLowerCase() || "t1";
-  const tabs = d.rounds.map(r =>
-    `<button class="rtab ${r.id===activeRound?'active':''}" onclick="switchRound('${r.id}')">
-      ${esc(r.label)}<span class="rtab-count">${r.questions.length}</span>
-    </button>`).join("");
-
-  const allTags = [...new Set(round.questions.flatMap(q=>q.tags||[]))].slice(0,14);
-  const tagBar = `<button class="tag-chip ${!activeTag?'active':''}" onclick="setTag(null)">all</button>` +
-    allTags.map(t=>`<button class="tag-chip ${activeTag===t?'active':''}" onclick="setTag('${t}')">${esc(t)}</button>`).join("");
-
-  const filtered = filterQuestions(round.questions);
-  const total = d.rounds.reduce((a,r)=>a+r.questions.length,0);
-  const hard  = d.rounds.flatMap(r=>r.questions).filter(q=>q.difficulty==="hard").length;
-
-  document.getElementById("companyView").innerHTML = `
-    <div class="co-header">
-      <div class="co-header-inner">
-        <div class="co-title-block">
-          <div class="co-icon">🏦</div>
-          <div>
-            <div style="display:flex;align-items:center;gap:10px">
-              <span class="co-title">${esc(d.displayName)}</span>
-              <span class="co-tier ${tierClass}">${esc(d.tier)}</span>
-            </div>
-            <div class="co-meta">
-              <span class="meta-txt">${esc(d.domain)}</span>
-              <span style="color:var(--text-3)">·</span>
-              <span class="ctc-pill">${esc(d.ctcRange)}</span>
-              ${d.location?`<span style="color:var(--text-3)">·</span><span class="meta-txt">${esc(d.location)}</span>`:''}
-            </div>
-          </div>
+    <div class="topnav">
+        <div class="nav-logo">Interview Prep <span>SDE 2 · Java Backend</span></div>
+        <div class="nav-right">
+            <span id="navQuizCount" style="font-size:11px;color:var(--text-3);font-family:'DM Mono',monospace;display:none"></span>
+            <button class="quiz-btn" id="quizBtn" onclick="toggleQuiz()">○ Quiz Mode</button>
         </div>
-      </div>
-      ${d.keyEdge?`<div class="edge-strip">${esc(d.keyEdge)}</div>`:''}
     </div>
 
-    <div class="round-tabs">${tabs}</div>
-
-    <div class="round-content animate">
-      <div class="round-overview">
-        <p class="overview-txt">${esc(round.overview||'')}</p>
-        <div class="tips-wrap">${(round.tips||[]).map(t=>`<div class="tip-chip">${esc(t)}</div>`).join("")}</div>
-      </div>
-
-      <div class="toolbar">
-        <input class="search-box" id="searchBox" placeholder="Search questions, topics, tags…"
-               value="${esc(searchVal)}" oninput="onSearch(this.value)"/>
-        ${quizMode?`<span class="quiz-prog" id="quizProg">${revealedSet.size}/${round.questions.length} revealed</span>`:''}
-      </div>
-
-      <div class="tag-bar">${tagBar}</div>
-
-      <div class="q-list" id="qList">
-        ${filtered.length ? filtered.map((q,i)=>buildCard(q,i+1)).join("") : `<div class="empty-q">No questions match your filter.</div>`}
-      </div>
-
-      <div class="stats-bar">
-        <div><div class="stat-val">${total}</div><div class="stat-lbl">Total Questions</div></div>
-        <div><div class="stat-val">${d.rounds.length}</div><div class="stat-lbl">Rounds</div></div>
-        <div><div class="stat-val">${hard}</div><div class="stat-lbl">Hard</div></div>
-        <div><div class="stat-val" style="font-size:14px">${esc(d.ctcRange)}</div><div class="stat-lbl">CTC Range</div></div>
-      </div>
-    </div>`;
-}
-
-function filterQuestions(questions) {
-  return questions.filter(q => {
-    const s = searchVal.toLowerCase();
-    const matchS = !s || q.topic.toLowerCase().includes(s) || q.question.toLowerCase().includes(s) || (q.tags||[]).some(t=>t.includes(s));
-    const matchT = !activeTag || (q.tags||[]).includes(activeTag);
-    return matchS && matchT;
-  });
-}
-
-function buildCard(q, num) {
-  const dCls = {easy:"diff-easy",medium:"diff-medium",hard:"diff-hard","n/a":"diff-na"}[q.difficulty]||"diff-na";
-  const isOpen  = expandedId === q.id;
-  const isCodeO = codeOpenSet.has(q.id);
-  const isRev   = revealedSet.has(q.id);
-
-  let body = "";
-  if (isOpen) {
-    body = `<div class="q-body">
-      <div class="sec-label lbl-q">QUESTION</div>
-      <div class="code-block">${esc(q.question)}</div>`;
-
-    if (!quizMode || isRev) {
-      body += `<div class="sec-label lbl-a">ANSWER</div>
-        <div class="code-block ans-block">${esc(q.answer||"")}</div>`;
-      if (q.pseudoCode) body += `<div class="sec-label lbl-p">PSEUDOCODE / SCHEMA</div>
-        <pre class="code-block pseudo-block">${esc(q.pseudoCode)}</pre>`;
-      if (q.javaCode) body += `
-        <button class="code-toggle" onclick="toggleCode('${q.id}')">
-          ${isCodeO?"▼ hide java":"▶ java code"}
-        </button>
-        ${isCodeO?`<pre class="code-block java-block">${esc(q.javaCode)}</pre>`:""}`;
-      if (q.followUps?.length) body += `<div class="sec-label lbl-f">FOLLOW-UP QUESTIONS</div>
-        <div class="fu-block">${q.followUps.map(f=>`<div class="fu-item">${esc(f)}</div>`).join("")}</div>`;
-      if (q.notes) body += `<div class="sec-label lbl-n">PREP NOTE</div>
-        <div class="note-block">${esc(q.notes)}</div>`;
-    } else {
-      body += `<button class="reveal-btn" onclick="revealAnswer('${q.id}')">▶ reveal answer</button>`;
-    }
-    body += `</div>`;
-  }
-
-  return `<div class="q-card ${isOpen?'open':''}" data-qid="${q.id}">
-    <button class="q-hdr" onclick="toggleCard('${q.id}')">
-      <span class="q-num">#${String(num).padStart(2,"0")}</span>
-      <div class="q-info">
-        <div class="q-topic">${esc(q.topic)}</div>
-        <div class="q-badges">
-          <span class="diff ${dCls}">${q.difficulty}</span>
-          ${(q.tags||[]).slice(0,4).map(t=>`<span class="tag-inline">${esc(t)}</span>`).join("")}
+    <div class="layout">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-label">Companies</div>
+            <div id="companyList"></div>
         </div>
-      </div>
-      <span class="q-chev">▼</span>
-    </button>
-    ${body}
-  </div>`;
-}
+        <div class="main" id="mainPanel">
+            <div class="state-msg" id="welcomeMsg">
+                <h2>Select a Company</h2>
+                <p>Choose a company from the sidebar to start your prep session.</p>
+            </div>
+            <div id="companyView" style="display:none"></div>
+        </div>
+    </div>
 
-// ── Interactions ──
-function switchRound(id) {
-  activeRound = id;
-  resetRoundState();
-  renderCompany();
-}
+    <script>
+        // ── Helpers (Moved to top to prevent ReferenceErrors) ──
+        function esc(s) {
+            if (!s) return "";
+            return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
 
-function toggleCard(id) {
-  expandedId = expandedId === id ? null : id;
-  if (expandedId !== id) { revealedSet.delete(id); codeOpenSet.delete(id); }
-  rerender();
-  if (expandedId === id) setTimeout(()=>{
-    document.querySelector(`[data-qid="${id}"]`)?.scrollIntoView({behavior:"smooth",block:"nearest"});
-  },60);
-}
+        // ── State ──
+        let index = null;
+        let activeCompId = null;
+        let activeData = null;
+        let activeRound = null;
+        let quizMode = false;
+        let searchVal = "";
+        let activeTag = null;
+        let expandedId = null;
+        let revealedSet = new Set();
+        let codeOpenSet = new Set();
+        const cache = {};
 
-function toggleCode(id) {
-  codeOpenSet.has(id) ? codeOpenSet.delete(id) : codeOpenSet.add(id);
-  rerender();
-}
+        // ── Bootstrap ──
+        async function init() {
+            try {
+                // Fetching from data/_index.json
+                const res = await fetch('data/_index.json');
+                if (!res.ok) throw new Error("Could not find _index.json");
+                index = await res.json();
+                buildSidebar();
+            } catch(e) {
+                console.error(e);
+                document.getElementById("welcomeMsg").innerHTML = `<h2>Load Error</h2><p style="color:var(--red)">Failed to load data. Ensure 'data/_index.json' exists.</p>`;
+            }
+        }
 
-function revealAnswer(id) {
-  revealedSet.add(id);
-  document.getElementById("quizProg") && (document.getElementById("quizProg").textContent =
-    `${revealedSet.size}/${activeData.rounds.find(r=>r.id===activeRound).questions.length} revealed`);
-  document.getElementById("navQuizCount") && (document.getElementById("navQuizCount").textContent =
-    `${revealedSet.size} revealed`);
-  rerender();
-}
+        function buildSidebar() {
+            if (!index || !index.companies) return;
+            let out = "";
+            const tiers = ["T1", "T2", "T3"];
+            const labels = {"T1": "Finance", "T2": "Fintech / Product", "T3": "Global / Remote"};
 
-function setTag(tag) {
-  activeTag = tag;
-  rerender();
-}
+            tiers.forEach(tier => {
+                out += `<div class="sidebar-label">${labels[tier]}</div>`;
+                index.companies.filter(c => c.tier === tier).forEach(c => {
+                    out += `
+                    <button class="company-btn" id="cbtn-${c.id}" onclick="selectCompany('${c.id}')">
+                        <span class="co-status status-${c.status || 'pending'}"></span>
+                        <span class="co-name">${esc(c.displayName)}</span>
+                        <span class="co-tier ${c.tier.toLowerCase()}">${c.tier}</span>
+                    </button>`;
+                });
+            });
+            document.getElementById("companyList").innerHTML = out;
+        }
 
-function onSearch(val) {
-  searchVal = val;
-  rerender();
-}
+        async function selectCompany(id) {
+            document.querySelectorAll(".company-btn").forEach(b => b.classList.remove("active"));
+            document.getElementById("cbtn-" + id)?.classList.add("active");
 
-function rerender() {
-  if (!activeData) return;
-  const round = activeData.rounds.find(r=>r.id===activeRound);
-  const filtered = filterQuestions(round.questions);
-  const allTags = [...new Set(round.questions.flatMap(q=>q.tags||[]))].slice(0,14);
+            const meta = index.companies.find(c => c.id === id);
+            if (meta?.status === "pending") {
+                document.getElementById("welcomeMsg").style.display = "flex";
+                document.getElementById("welcomeMsg").innerHTML = `<h2>${esc(meta.displayName)}</h2><p>Data not yet generated.</p>`;
+                document.getElementById("companyView").style.display = "none";
+                return;
+            }
 
-  document.getElementById("qList").innerHTML =
-    filtered.length ? filtered.map((q,i)=>buildCard(q,i+1)).join("") :
-    `<div class="empty-q">No questions match your filter.</div>`;
+            if (!cache[id]) {
+                try {
+                    const res = await fetch(`data/${id}.json`);
+                    cache[id] = await res.json();
+                } catch(e) {
+                    document.getElementById("welcomeMsg").innerHTML = `<h2>Error</h2><p>Could not load ${id}.json</p>`;
+                    return;
+                }
+            }
 
-  document.querySelector(".tag-bar") && (document.querySelector(".tag-bar").innerHTML =
-    `<button class="tag-chip ${!activeTag?'active':''}" onclick="setTag(null)">all</button>` +
-    allTags.map(t=>`<button class="tag-chip ${activeTag===t?'active':''}" onclick="setTag('${t}')">${esc(t)}</button>`).join(""));
+            activeCompId = id;
+            activeData = cache[id];
+            activeRound = activeData.rounds[0].id;
+            resetRoundState();
+            document.getElementById("welcomeMsg").style.display = "none";
+            document.getElementById("companyView").style.display = "block";
+            renderCompany();
+        }
 
-  document.querySelectorAll(".rtab").forEach(b=>{
-    b.classList.toggle("active", b.textContent.trim().startsWith(
-      activeData.rounds.find(r=>r.id===activeRound)?.label));
-  });
-}
+        function resetRoundState() {
+            expandedId = null;
+            revealedSet = new Set();
+            codeOpenSet = new Set();
+            searchVal = "";
+            activeTag = null;
+        }
 
-function toggleQuiz() {
-  quizMode = !quizMode;
-  revealedSet = new Set();
-  const btn = document.getElementById("quizBtn");
-  btn.textContent = quizMode ? "◉ Quiz Mode" : "○ Quiz Mode";
-  btn.classList.toggle("active", quizMode);
-  document.getElementById("navQuizCount").style.display = quizMode ? "block" : "none";
-  if (activeData) renderCompany();
-}
+        function renderCompany() {
+            const d = activeData;
+            const round = d.rounds.find(r => r.id === activeRound) || d.rounds[0];
+            
+            const tabs = d.rounds.map(r => `
+                <button class="rtab ${r.id === activeRound ? 'active' : ''}" onclick="switchRound('${r.id}')">
+                    ${esc(r.label)} <span style="font-size:10px; opacity:0.6">(${r.questions.length})</span>
+                </button>`).join("");
 
-function esc(s) {
-  if (!s) return "";
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-}
+            const filtered = filterQuestions(round.questions);
 
-init();
-</script>
+            document.getElementById("companyView").innerHTML = `
+                <div class="co-header">
+                    <div class="co-header-inner">
+                        <span class="co-title">${esc(d.displayName)}</span>
+                        <span class="ctc-pill">${esc(d.ctcRange)}</span>
+                    </div>
+                </div>
+                <div class="round-tabs">${tabs}</div>
+                <div class="round-content">
+                    <div class="q-list">
+                        ${filtered.map((q, i) => buildCard(q, i + 1)).join("")}
+                    </div>
+                </div>`;
+        }
+
+        function filterQuestions(qs) {
+            if (!searchVal) return qs;
+            return qs.filter(q => q.topic.toLowerCase().includes(searchVal.toLowerCase()));
+        }
+
+        function buildCard(q, num) {
+            const isOpen = expandedId === q.id;
+            const isRev = revealedSet.has(q.id);
+            let body = "";
+
+            if (isOpen) {
+                body = `<div class="q-body">
+                    <div style="color:var(--text-3); font-size:10px; margin-top:10px;">QUESTION</div>
+                    <div class="code-block">${esc(q.question)}</div>`;
+                
+                if (!quizMode || isRev) {
+                    body += `<div style="color:var(--blue); font-size:10px; margin-top:10px;">ANSWER</div>
+                             <div class="code-block">${esc(q.answer)}</div>`;
+                } else {
+                    body += `<button class="reveal-btn" onclick="revealAnswer('${q.id}')">Reveal Answer</button>`;
+                }
+                body += `</div>`;
+            }
+
+            return `
+            <div class="q-card">
+                <button class="q-hdr" onclick="toggleCard('${q.id}')">
+                    <span style="opacity:0.5">#${num}</span>
+                    <span>${esc(q.topic)}</span>
+                </button>
+                ${body}
+            </div>`;
+        }
+
+        function toggleCard(id) {
+            expandedId = expandedId === id ? null : id;
+            renderCompany();
+        }
+
+        function revealAnswer(id) {
+            revealedSet.add(id);
+            renderCompany();
+        }
+
+        function switchRound(id) {
+            activeRound = id;
+            renderCompany();
+        }
+
+        function toggleQuiz() {
+            quizMode = !quizMode;
+            revealedSet = new Set();
+            const btn = document.getElementById("quizBtn");
+            btn.textContent = quizMode ? "◉ Quiz Mode" : "○ Quiz Mode";
+            btn.classList.toggle("active", quizMode);
+            if (activeData) renderCompany();
+        }
+
+        init();
+    </script>
 </body>
 </html>
