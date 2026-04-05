@@ -1,0 +1,407 @@
+{
+  "companyId": "goldman-sachs",
+  "displayName": "Goldman Sachs",
+  "tier": "T1",
+  "domain": "Finance / Investment Banking",
+  "ctcRange": "₹24–44L",
+  "keyEdge": "SuperDay format with BST-heavy DSA, LRU Cache LLD, concurrency + production case study, and HM who deep-dives your current architecture",
+  "location": "Mumbai / Bengaluru",
+  "processDuration": "2–4 weeks",
+  "activeRounds": ["oa", "dsa", "lld", "system", "hm"],
+  "applicationStatus": "not-applied",
+  "lastUpdated": "2026-04-05",
+  "rounds": [
+    {
+      "id": "oa",
+      "label": "Online Assessment",
+      "overview": "90-minute HackerRank with 3–4 problems spanning Greedy, Sorting, DP, and Graphs. GS OA is medium-hard — expect at least one LC Hard. Verbal reasoning about trade-offs is expected even in written code comments.",
+      "tips": [
+        "LC 166, 680, 70, 42, 295, 34 are directly confirmed in GS OA/CoderPad — solve all before applying",
+        "Always show brute force → optimised progression in comments, even in OA",
+        "Use long not int for division problems to avoid overflow",
+        "CoderPad screening follows OA — code must compile and run, not just be correct in logic",
+        "For greedy problems: state the greedy choice property explicitly — GS rewards verbal reasoning"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "topic": "Fraction to Recurring Decimal",
+          "difficulty": "medium",
+          "question": "Given a string representing a fraction (e.g. '2/5' or '-2/3'), return its decimal representation. If the decimal part is recurring, enclose the repeating part in parentheses. E.g. 2/3 → '0.(6)', 1/4 → '0.25'.",
+          "answer": "Long-division simulation with a HashMap tracking remainder → position in result string. When a remainder repeats, a cycle exists — insert '(' at the stored position and append ')'. Handle negatives first using XOR of signs. Use long throughout to avoid integer overflow on large numerators/denominators.\n\nKey cases:\n• remainder = 0 → terminating decimal\n• remainder repeats → recurring decimal\n• denominator divides numerator evenly → integer result",
+          "javaCode": "public String fractionToDecimal(int numerator, int denominator) {\n    if (numerator == 0) return \"0\";\n    StringBuilder sb = new StringBuilder();\n    // Handle sign\n    if ((numerator < 0) ^ (denominator < 0)) sb.append(\"-\");\n    long num = Math.abs((long) numerator);\n    long den = Math.abs((long) denominator);\n    // Integer part\n    sb.append(num / den);\n    long remainder = num % den;\n    if (remainder == 0) return sb.toString();\n    sb.append(\".\");\n    // Decimal part\n    Map<Long, Integer> remainderMap = new HashMap<>();\n    while (remainder != 0) {\n        if (remainderMap.containsKey(remainder)) {\n            sb.insert(remainderMap.get(remainder), \"(\");\n            sb.append(\")\");\n            break;\n        }\n        remainderMap.put(remainder, sb.length());\n        remainder *= 10;\n        sb.append(remainder / den);\n        remainder %= den;\n    }\n    return sb.toString();\n}",
+          "pseudoCode": null,
+          "tags": ["hashmap", "math", "simulation", "long-division", "oa"],
+          "followUps": [
+            "How do you handle the case where numerator is Integer.MIN_VALUE?",
+            "What is the maximum length of the recurring part?",
+            "How would you detect the cycle without a HashMap? (Floyd's)"
+          ],
+          "notes": "LC 166. Confirmed in GS OA. The HashMap remainder→position trick is the key insight — most candidates miss it."
+        },
+        {
+          "id": "q2",
+          "topic": "Valid Palindrome with One Removal",
+          "difficulty": "easy",
+          "question": "Given a string s, return true if it can become a palindrome by removing at most one character.",
+          "answer": "Two-pointer from both ends. On first mismatch, try two options: skip left character or skip right character. Check if either resulting substring is a palindrome. O(n) time, O(1) space.\n\nEdge cases: single character (always true), all-same characters (always true), empty string (true).",
+          "javaCode": "public boolean validPalindrome(String s) {\n    int l = 0, r = s.length() - 1;\n    while (l < r) {\n        if (s.charAt(l) != s.charAt(r)) {\n            // Try skipping left or right character\n            return isPalin(s, l+1, r) || isPalin(s, l, r-1);\n        }\n        l++; r--;\n    }\n    return true;\n}\nprivate boolean isPalin(String s, int l, int r) {\n    while (l < r) {\n        if (s.charAt(l) != s.charAt(r)) return false;\n        l++; r--;\n    }\n    return true;\n}",
+          "pseudoCode": null,
+          "tags": ["two-pointer", "string", "palindrome", "oa"],
+          "followUps": [
+            "What if you can remove at most k characters?",
+            "What is the time complexity if the string is almost a palindrome?",
+            "How would you extend this to Unicode characters?"
+          ],
+          "notes": "LC 680. Confirmed in GS OA 2024–2025."
+        },
+        {
+          "id": "q3",
+          "topic": "Climbing Stairs — Pattern Recognition Test",
+          "difficulty": "easy",
+          "question": "Count the number of ways to climb n stairs taking 1 or 2 steps at a time. The interviewer specifically checks whether you recognise this as equivalent to Fibonacci.",
+          "answer": "Pattern recognition is the point — state immediately: 'This is equivalent to Fibonacci — dp[n] = dp[n-1] + dp[n-2].'\n\nGS wants to see the progression of thinking:\n1. Brute force recursion: O(2^n) time, O(n) stack\n2. Memoisation: O(n) time, O(n) space\n3. Bottom-up DP: O(n) time, O(n) space\n4. Space-optimised: O(n) time, O(1) space — two variables\n\nNever jump straight to the optimal — show the evolution.",
+          "javaCode": "// Space-optimised — O(n) time, O(1) space\npublic int climbStairs(int n) {\n    if (n <= 2) return n;\n    int prev2 = 1, prev1 = 2;\n    for (int i = 3; i <= n; i++) {\n        int curr = prev1 + prev2; // Fibonacci recurrence\n        prev2 = prev1;\n        prev1 = curr;\n    }\n    return prev1;\n}\n// Brute force for progression demo\nprivate int helper(int n, int[] memo) {\n    if (n <= 2) return n;\n    if (memo[n] != 0) return memo[n];\n    return memo[n] = helper(n-1, memo) + helper(n-2, memo);\n}",
+          "pseudoCode": null,
+          "tags": ["dp", "fibonacci", "recursion", "pattern-recognition", "oa"],
+          "followUps": [
+            "What if you can take 1, 2, or 3 steps?",
+            "What if some stairs are broken?",
+            "How does this change for very large n (10^18)? (Matrix exponentiation)"
+          ],
+          "notes": "Confirmed GS OA. The meta-observation 'this is Fibonacci' is what they're explicitly testing — say it first."
+        },
+        {
+          "id": "q4",
+          "topic": "Dynamic Vector Implementation",
+          "difficulty": "medium",
+          "question": "Implement a dynamic array (Vector) from scratch with get(i), add(e), remove(i), and size(). State time and space complexity for each operation.",
+          "answer": "Internal fixed-size array with capacity tracking. When full, double capacity and copy elements.\n\nComplexities:\n• get(i): O(1) — direct index access\n• add(e): amortised O(1) — O(n) when resizing, but amortised across n adds\n• remove(i): O(n) — must shift elements left\n• size(): O(1) — maintain size counter\n\nKey distinctions: size (elements present) vs capacity (array length). Java ArrayList uses 1.5x growth factor; textbook uses 2x.",
+          "javaCode": "public class MyVector<T> {\n    private Object[] data;\n    private int size;\n    private static final int INITIAL_CAPACITY = 10;\n\n    public MyVector() {\n        data = new Object[INITIAL_CAPACITY];\n        size = 0;\n    }\n\n    // O(1)\n    public T get(int i) {\n        if (i < 0 || i >= size) throw new IndexOutOfBoundsException();\n        return (T) data[i];\n    }\n\n    // Amortised O(1)\n    public void add(T e) {\n        if (size == data.length) resize();\n        data[size++] = e;\n    }\n\n    // O(n) — shifts elements\n    public void remove(int i) {\n        if (i < 0 || i >= size) throw new IndexOutOfBoundsException();\n        System.arraycopy(data, i+1, data, i, size-i-1);\n        data[--size] = null; // avoid memory leak\n    }\n\n    // O(1)\n    public int size() { return size; }\n\n    private void resize() {\n        Object[] newData = new Object[data.length * 2];\n        System.arraycopy(data, 0, newData, 0, size);\n        data = newData;\n    }\n}",
+          "pseudoCode": null,
+          "tags": ["arrays", "data-structures", "amortised", "generics", "oa"],
+          "followUps": [
+            "Why does Java ArrayList use 1.5x growth factor instead of 2x?",
+            "How would you make this thread-safe? (Vector vs Collections.synchronizedList vs CopyOnWriteArrayList)",
+            "How does System.arraycopy differ from a manual loop?"
+          ],
+          "notes": "Confirmed in GS OA. The amortised analysis for add() is the key concept GS probes."
+        },
+        {
+          "id": "q5",
+          "topic": "Find First and Last Position in Sorted Array",
+          "difficulty": "medium",
+          "question": "Given a sorted array of integers and a target, find the first and last position of the target. Return [-1, -1] if not found. Must be O(log n).",
+          "answer": "Two binary searches: one for the leftmost occurrence (when found, continue searching left half), one for rightmost (when found, continue searching right half). Write as two clean helper methods.\n\nEdge cases GS tests: empty array, single element, element not present, all elements equal to target.",
+          "javaCode": "public int[] searchRange(int[] nums, int target) {\n    return new int[]{findFirst(nums, target), findLast(nums, target)};\n}\nprivate int findFirst(int[] nums, int target) {\n    int l = 0, r = nums.length - 1, result = -1;\n    while (l <= r) {\n        int mid = l + (r - l) / 2;\n        if (nums[mid] == target) { result = mid; r = mid - 1; } // keep searching left\n        else if (nums[mid] < target) l = mid + 1;\n        else r = mid - 1;\n    }\n    return result;\n}\nprivate int findLast(int[] nums, int target) {\n    int l = 0, r = nums.length - 1, result = -1;\n    while (l <= r) {\n        int mid = l + (r - l) / 2;\n        if (nums[mid] == target) { result = mid; l = mid + 1; } // keep searching right\n        else if (nums[mid] < target) l = mid + 1;\n        else r = mid - 1;\n    }\n    return result;\n}",
+          "pseudoCode": null,
+          "tags": ["binary-search", "arrays", "coderpad", "oa"],
+          "followUps": [
+            "What if the array has duplicates but is not fully sorted?",
+            "Can you do this in a single binary search pass?",
+            "How would you find the count of occurrences using this?"
+          ],
+          "notes": "LC 34. Confirmed GS CoderPad screening. Code must compile and run — GS runs test cases."
+        },
+        {
+          "id": "q6",
+          "topic": "Find Median from Running Stream",
+          "difficulty": "hard",
+          "question": "Design a data structure that supports: addNum(int num) — adds a number to the stream, and findMedian() — returns the median of all numbers added so far.",
+          "answer": "Two heaps: max-heap for lower half, min-heap for upper half.\n\nInvariant: maxHeap.size() == minHeap.size() OR maxHeap.size() == minHeap.size() + 1\n\nOn add:\n1. Push to maxHeap (lower half)\n2. Move maxHeap top to minHeap (balance)\n3. If minHeap > maxHeap in size, move minHeap top back to maxHeap\n\nMedian:\n• Equal sizes: (maxHeap.peek() + minHeap.peek()) / 2.0\n• maxHeap larger: maxHeap.peek()\n\nComplexity: O(log n) add, O(1) findMedian\n\nNote: GS interviewer was not satisfied with approach alone — write the full code.",
+          "javaCode": "class MedianFinder {\n    private PriorityQueue<Integer> maxHeap; // lower half\n    private PriorityQueue<Integer> minHeap; // upper half\n\n    public MedianFinder() {\n        maxHeap = new PriorityQueue<>(Collections.reverseOrder());\n        minHeap = new PriorityQueue<>();\n    }\n\n    public void addNum(int num) {\n        maxHeap.offer(num);              // always add to lower half first\n        minHeap.offer(maxHeap.poll());   // balance: push max of lower to upper\n        if (minHeap.size() > maxHeap.size()) // maintain invariant\n            maxHeap.offer(minHeap.poll());\n    }\n\n    public double findMedian() {\n        if (maxHeap.size() > minHeap.size()) return maxHeap.peek();\n        return (maxHeap.peek() + minHeap.peek()) / 2.0;\n    }\n}",
+          "pseudoCode": null,
+          "tags": ["heap", "priority-queue", "design", "streaming", "hard"],
+          "followUps": [
+            "What if all numbers are in range [0, 100]? (Bucket sort / counting array)",
+            "What if memory is constrained and you only need approximate median?",
+            "How would you handle removal of numbers from the stream?"
+          ],
+          "notes": "LC 295. Confirmed GS CoderPad. Interviewer moved to puzzles after candidate only explained — always write the code."
+        }
+      ]
+    },
+    {
+      "id": "dsa",
+      "label": "DSA / Coding Round",
+      "overview": "GS SuperDay DSA round: 2 problems in 60 min, one medium + one hard, with heavy emphasis on BST and tree problems. Verbal reasoning about approach is rated as highly as code quality — state your thinking before typing.",
+      "tips": [
+        "BST problems are GS's most reported DSA pattern — know LCA, kth smallest, validate BST, BST to sorted list cold",
+        "Always state brute force first, then identify the bottleneck, then state optimal — GS explicitly rewards this",
+        "For tree problems: ask if it's BST or general binary tree — completely different approaches",
+        "Calculator/expression evaluation comes up frequently — have Shunting-Yard ready",
+        "Concurrency questions appear in Round 3 alongside DSA — know ThreadPool, BlockingQueue, AtomicInteger"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "topic": "BST Lowest Common Ancestor",
+          "difficulty": "medium",
+          "question": "Given a BST and two nodes p and q, find their Lowest Common Ancestor. Follow-up: extend to a general Binary Tree (not BST).",
+          "answer": "BST LCA: exploit BST property.\n• Both p and q < root → LCA is in left subtree\n• Both p and q > root → LCA is in right subtree\n• Otherwise → root is LCA\nO(h) time where h is height. O(1) space iteratively.\n\nGeneral Binary Tree LCA (LC 236): recursive post-order.\n• If current node matches p or q → return it\n• Recurse left and right\n• If both sides return non-null → current node is LCA\n• If only one side returns non-null → propagate that up",
+          "javaCode": "// BST LCA — O(h) time, O(1) space\npublic TreeNode lcaBST(TreeNode root, TreeNode p, TreeNode q) {\n    while (root != null) {\n        if (p.val < root.val && q.val < root.val)\n            root = root.left;\n        else if (p.val > root.val && q.val > root.val)\n            root = root.right;\n        else\n            return root; // split point = LCA\n    }\n    return null;\n}\n\n// General Binary Tree LCA — O(n) time\npublic TreeNode lcaGeneral(TreeNode root, TreeNode p, TreeNode q) {\n    if (root == null || root == p || root == q) return root;\n    TreeNode left  = lcaGeneral(root.left, p, q);\n    TreeNode right = lcaGeneral(root.right, p, q);\n    if (left != null && right != null) return root; // p and q on different sides\n    return left != null ? left : right; // propagate found node up\n}",
+          "pseudoCode": null,
+          "tags": ["bst", "tree", "lca", "recursion", "dfs"],
+          "followUps": [
+            "What if nodes p or q might not exist in the tree?",
+            "What if the tree is very deep — how do you avoid stack overflow?",
+            "How would you find LCA of multiple nodes, not just two?"
+          ],
+          "notes": "Confirmed directly in GS SuperDay DSA round. BST vs general binary tree is a key distinction GS tests."
+        },
+        {
+          "id": "q2",
+          "topic": "Detect Cycle in String-as-Graph",
+          "difficulty": "medium",
+          "question": "Given a string, model it as a graph where each character at index i points to the next index based on character value. Detect if this graph has a cycle. Write optimised code.",
+          "answer": "Model as linked list cycle detection. Each index i maps to next index (e.g. index = (index + charValue) % n). Use Floyd's Two-Pointer (tortoise and hare): slow moves 1 step, fast moves 2. If fast catches slow → cycle.\n\nO(n) time, O(1) space. Alternative HashSet approach uses O(n) space — GS expects Floyd's as 'optimised'.",
+          "javaCode": "public boolean hasCycle(String s) {\n    int n = s.length();\n    int slow = 0, fast = 0;\n    do {\n        slow = nextIndex(s, slow, n);\n        fast = nextIndex(s, nextIndex(s, fast, n), n);\n        if (fast == slow) return true;\n    } while (fast != 0); // back to start = no cycle found\n    return false;\n}\nprivate int nextIndex(String s, int i, int n) {\n    return (i + (s.charAt(i) - 'a' + 1)) % n;\n}\n// Alternative: HashSet — O(n) space\npublic boolean hasCycleSet(String s) {\n    Set<Integer> visited = new HashSet<>();\n    int idx = 0;\n    while (visited.add(idx)) {\n        idx = (idx + s.charAt(idx)) % s.length();\n    }\n    return true; // always cycles in bounded index space\n}",
+          "pseudoCode": null,
+          "tags": ["floyd", "cycle-detection", "graph", "string", "two-pointer"],
+          "followUps": [
+            "What is the time complexity of Floyd's vs HashSet approach?",
+            "How would you find the start of the cycle, not just detect it?",
+            "What if the string has Unicode characters?"
+          ],
+          "notes": "Confirmed GS SuperDay Round 1. GS explicitly asked for 'optimised code' — Floyd's is the expected answer."
+        },
+        {
+          "id": "q3",
+          "topic": "Basic Calculator with Brackets",
+          "difficulty": "hard",
+          "question": "Given a string expression like '(2*5+7)', evaluate it and return the integer result. Mid-interview the interviewer added: it can also have nested brackets.",
+          "answer": "Two stacks: operand stack and operator stack. Process character by character:\n• Digit → parse full number, push to operands\n• '(' → push to operators\n• ')' → evaluate until matching '(' found\n• Operator → pop and evaluate while top of stack has >=  priority (left-to-right associativity), then push\n\nPrecedence: * and / = 2, + and - = 1. O(n) time and space.",
+          "javaCode": "public int calculate(String s) {\n    Deque<Integer> nums = new ArrayDeque<>();\n    Deque<Character> ops = new ArrayDeque<>();\n    int i = 0;\n    while (i < s.length()) {\n        char c = s.charAt(i);\n        if (c == ' ') { i++; continue; }\n        if (Character.isDigit(c)) {\n            int num = 0;\n            while (i < s.length() && Character.isDigit(s.charAt(i)))\n                num = num * 10 + (s.charAt(i++) - '0');\n            nums.push(num); continue;\n        } else if (c == '(') {\n            ops.push(c);\n        } else if (c == ')') {\n            while (ops.peek() != '(') apply(nums, ops);\n            ops.pop(); // remove '('\n        } else { // operator\n            while (!ops.isEmpty() && ops.peek() != '(' && prec(ops.peek()) >= prec(c))\n                apply(nums, ops);\n            ops.push(c);\n        }\n        i++;\n    }\n    while (!ops.isEmpty()) apply(nums, ops);\n    return nums.pop();\n}\nprivate int prec(char op) {\n    return (op == '*' || op == '/') ? 2 : 1;\n}\nprivate void apply(Deque<Integer> nums, Deque<Character> ops) {\n    int b = nums.pop(), a = nums.pop();\n    switch (ops.pop()) {\n        case '+': nums.push(a + b); break;\n        case '-': nums.push(a - b); break;\n        case '*': nums.push(a * b); break;\n        case '/': nums.push(a / b); break;\n    }\n}",
+          "pseudoCode": null,
+          "tags": ["stack", "expression-evaluation", "shunting-yard", "hard"],
+          "followUps": [
+            "How would you handle unary minus e.g. '-(2+3)'?",
+            "How would you add exponentiation with right-to-left associativity?",
+            "What if operators are user-defined with custom priorities? (inject priority map)"
+          ],
+          "notes": "Confirmed GS SuperDay. GS added brackets mid-interview to test adaptability — your design must handle it cleanly."
+        },
+        {
+          "id": "q4",
+          "topic": "Maximum Sum Path in Matrix",
+          "difficulty": "hard",
+          "question": "Given a 2D matrix, find the maximum value path travelling only diagonally up-left, diagonally down-left, or right. Follow-up: what if directions change?",
+          "answer": "2D DP where dp[i][j] = maximum sum to reach cell (i,j).\n\nTransitions (moving left to right):\n• From (i-1, j-1) — diagonal up\n• From (i+1, j-1) — diagonal down\n• From (i, j-1) — straight right\n\nFill column by column left to right. Answer = max value in last column.\n\nFor direction change follow-up: redefine valid transitions accordingly — the DP framework stays the same.",
+          "javaCode": "public int maxSumPath(int[][] grid) {\n    int m = grid.length, n = grid[0].length;\n    int[][] dp = new int[m][n];\n    // Initialize first column\n    for (int i = 0; i < m; i++) dp[i][0] = grid[i][0];\n    // Fill left to right\n    for (int j = 1; j < n; j++) {\n        for (int i = 0; i < m; i++) {\n            dp[i][j] = grid[i][j]; // start with cell value\n            // From left\n            dp[i][j] = Math.max(dp[i][j], dp[i][j-1] + grid[i][j]);\n            // From diagonal up-left\n            if (i > 0) dp[i][j] = Math.max(dp[i][j], dp[i-1][j-1] + grid[i][j]);\n            // From diagonal down-left\n            if (i < m-1) dp[i][j] = Math.max(dp[i][j], dp[i+1][j-1] + grid[i][j]);\n        }\n    }\n    int max = Integer.MIN_VALUE;\n    for (int i = 0; i < m; i++) max = Math.max(max, dp[i][n-1]);\n    return max;\n}",
+          "pseudoCode": null,
+          "tags": ["dp", "matrix", "2d-dp", "hard"],
+          "followUps": [
+            "What if you can move in all 8 directions?",
+            "How do you reconstruct the actual path, not just the sum?",
+            "What if cells have negative values?"
+          ],
+          "notes": "Confirmed GS SuperDay. Always state the recursion first, then convert to DP — GS explicitly rewards showing the thought process."
+        },
+        {
+          "id": "q5",
+          "topic": "Trapping Rainwater",
+          "difficulty": "hard",
+          "question": "Given an array of bar heights, compute how much rainwater can be trapped between the bars.",
+          "answer": "Three approaches — GS rewards showing all three:\n\n1. Brute force: For each bar, scan left and right for the max height. Water = min(leftMax, rightMax) - height[i]. O(n²) time, O(1) space.\n\n2. DP precomputation: Precompute leftMax[] and rightMax[] arrays. O(n) time, O(n) space.\n\n3. Two-pointer optimal: Process from both ends. Move the pointer on the side with lower max. O(n) time, O(1) space.",
+          "javaCode": "// Two-pointer — O(n) time, O(1) space\npublic int trap(int[] height) {\n    int l = 0, r = height.length - 1;\n    int leftMax = 0, rightMax = 0, water = 0;\n    while (l < r) {\n        if (height[l] < height[r]) {\n            if (height[l] >= leftMax) leftMax = height[l];\n            else water += leftMax - height[l];\n            l++;\n        } else {\n            if (height[r] >= rightMax) rightMax = height[r];\n            else water += rightMax - height[r];\n            r--;\n        }\n    }\n    return water;\n}\n// DP precompute — O(n) time, O(n) space\npublic int trapDP(int[] h) {\n    int n = h.length;\n    int[] lMax = new int[n], rMax = new int[n];\n    lMax[0] = h[0]; rMax[n-1] = h[n-1];\n    for (int i=1;i<n;i++) lMax[i] = Math.max(lMax[i-1], h[i]);\n    for (int i=n-2;i>=0;i--) rMax[i] = Math.max(rMax[i+1], h[i]);\n    int water = 0;\n    for (int i=0;i<n;i++) water += Math.min(lMax[i], rMax[i]) - h[i];\n    return water;\n}",
+          "pseudoCode": null,
+          "tags": ["two-pointer", "dp", "arrays", "hard", "coderpad"],
+          "followUps": [
+            "How would you solve this in 3D? (LC 407 — Trapping Rain Water II)",
+            "What if bars can have fractional heights?",
+            "Can you solve this using a monotonic stack?"
+          ],
+          "notes": "LC 42. Confirmed GS CoderPad. GS interviewer was satisfied when candidate showed all three approaches progression."
+        }
+      ]
+    },
+    {
+      "id": "lld",
+      "label": "Low Level Design / Machine Coding",
+      "overview": "GS LLD round (SuperDay Round 2) focuses on LRU Cache as the primary LLD question, followed by HLD discussion on DB optimisation. The interviewer digs deep into whatever you say — every claim will be challenged.",
+      "tips": [
+        "Build LRU Cache from scratch with HashMap + doubly linked list — do NOT use Java's LinkedHashMap as a shortcut",
+        "Know LinkedHashMap accessOrder=true and removeEldestEntry() — GS specifically asks about its internals",
+        "Thread-safe LRU extension: ReentrantReadWriteLock — read lock for get(), write lock for put()",
+        "For HLD DB questions: know WAL, batch writes, LSM tree vs B-Tree, CQRS cold",
+        "For any design: state trade-offs proactively — GS penalises answers without trade-off discussion"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "topic": "LRU Cache — Full Implementation",
+          "difficulty": "hard",
+          "question": "Implement an LRU Cache with get(key) and put(key, value) both in O(1). The interviewer dug deep into every design decision and asked about Java's LinkedHashMap internals.",
+          "answer": "HashMap + Doubly Linked List:\n• HashMap: key → Node reference (O(1) lookup)\n• DLL: maintains access order (most recent at head, LRU at tail)\n• Dummy head and dummy tail simplify edge cases\n\nget(key): find node via HashMap, detach it, move to head — O(1)\nput(key, value): if exists → update + move to head. If new → add at head, evict tail if over capacity — O(1)\n\nGS deep dive: LinkedHashMap with accessOrder=true uses identical mechanism — on access, entry moves to tail of internal linked list. Override removeEldestEntry() to evict when size > capacity.",
+          "javaCode": "class LRUCache {\n    private class Node {\n        int key, val;\n        Node prev, next;\n        Node(int k, int v) { key = k; val = v; }\n    }\n    private Map<Integer, Node> map;\n    private Node head, tail; // dummy nodes\n    private int cap;\n\n    public LRUCache(int capacity) {\n        cap = capacity;\n        map = new HashMap<>();\n        head = new Node(0, 0); tail = new Node(0, 0);\n        head.next = tail; tail.prev = head;\n    }\n\n    public int get(int key) {\n        if (!map.containsKey(key)) return -1;\n        Node n = map.get(key);\n        remove(n);\n        addToHead(n);\n        return n.val;\n    }\n\n    public void put(int key, int value) {\n        if (map.containsKey(key)) {\n            Node n = map.get(key);\n            n.val = value;\n            remove(n); addToHead(n);\n        } else {\n            Node n = new Node(key, value);\n            map.put(key, n);\n            addToHead(n);\n            if (map.size() > cap) {\n                Node lru = tail.prev;\n                remove(lru);\n                map.remove(lru.key);\n            }\n        }\n    }\n\n    private void addToHead(Node n) {\n        n.next = head.next; n.prev = head;\n        head.next.prev = n; head.next = n;\n    }\n    private void remove(Node n) {\n        n.prev.next = n.next; n.next.prev = n.prev;\n    }\n\n    // Thread-safe extension\n    // private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();\n    // get(): lock.readLock().lock() ... finally lock.readLock().unlock()\n    // put(): lock.writeLock().lock() ... finally lock.writeLock().unlock()\n}",
+          "pseudoCode": null,
+          "tags": ["lru", "hashmap", "doubly-linked-list", "design", "lld", "hard"],
+          "followUps": [
+            "How would you make this thread-safe? (ReentrantReadWriteLock)",
+            "How does Java's LinkedHashMap implement LRU internally?",
+            "How would you implement LFU Cache instead? (Least Frequently Used)",
+            "What if you need distributed LRU across multiple servers? (Redis)"
+          ],
+          "notes": "Confirmed GS SuperDay Round 2. Interviewer dug deep into every decision. Do NOT use LinkedHashMap shortcut — implement DLL manually."
+        },
+        {
+          "id": "q2",
+          "topic": "Store Visit Data Structure",
+          "difficulty": "medium",
+          "question": "Given a log file of store visits, build a data structure to efficiently query: did at least 2 different customers visit the same store on a given day? Discuss space vs query time trade-offs.",
+          "answer": "Map<String, Map<String, Set<String>>> → storeId → date → Set of customerIds\n\nQuery: storeVisits.get(storeId).get(date).size() >= 2 → O(1)\nBuild: O(n) time and space\n\nTrade-off GS asked: if space is constrained?\n→ Probabilistic: Bloom filter per (storeId, date) pair to approximate count. Near O(1) space, but false positives possible.\n\nFinance context: same pattern used at Barclays for ATM visit fraud detection — flagging if same card used at 2+ ATMs in same city within 1 hour.",
+          "javaCode": "class StoreVisitTracker {\n    // storeId -> date -> Set<customerId>\n    private Map<String, Map<String, Set<String>>> visits = new HashMap<>();\n\n    public void addVisit(String storeId, String date, String customerId) {\n        visits\n            .computeIfAbsent(storeId, k -> new HashMap<>())\n            .computeIfAbsent(date, k -> new HashSet<>())\n            .add(customerId);\n    }\n\n    // O(1) query\n    public boolean hasMultipleVisitors(String storeId, String date) {\n        Map<String, Set<String>> dateMap = visits.get(storeId);\n        if (dateMap == null) return false;\n        Set<String> customers = dateMap.get(date);\n        return customers != null && customers.size() >= 2;\n    }\n}",
+          "pseudoCode": null,
+          "tags": ["hashmap", "design", "space-tradeoff", "lld", "fraud-detection"],
+          "followUps": [
+            "What if you need top-K stores with most visitors on a given day?",
+            "How would you handle this at scale — millions of visits per second?",
+            "What if you only need approximate counts? (Count-Min Sketch)"
+          ],
+          "notes": "Confirmed GS SuperDay. The Bloom filter trade-off answer clearly differentiated strong candidates."
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "label": "System Design / HLD",
+      "overview": "GS system design spans HLD (DB optimisation, write scaling, CI/CD) and production case studies. Expect to defend every architectural choice — the interviewer will challenge any claim you don't back with reasoning.",
+      "tips": [
+        "Know 6 DB write optimisation techniques: WAL, batch writes, read replicas, sharding, CQRS, LSM vs B-Tree",
+        "Frame every system design answer with your Barclays experience and real numbers",
+        "For production incident: always Mitigate first, Investigate second — never the reverse",
+        "Know trunk-based development and why GS prefers it over feature branching",
+        "CQRS is a GS favourite — separate write store from read store, know the trade-offs"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "topic": "Optimising Writes in a Database at Scale",
+          "difficulty": "hard",
+          "question": "How would you optimise writes in a database system at scale? The interviewer asked about replication, archival, scaling, and indexing.",
+          "answer": "6 techniques — know all cold:\n\n1. Write-Ahead Logging (WAL): log changes before applying — durability without immediate disk flush\n2. Batch writes: buffer and flush in bulk — reduces I/O operations drastically\n3. Read replicas: offload reads to replicas so write primary isn't contended\n4. Sharding: horizontal partition by key — distribute write load across nodes\n5. CQRS: separate write store (normalised, write-optimised) from read store (denormalised, query-optimised)\n6. LSM Tree vs B-Tree: Cassandra uses LSM (append-only writes, fast, compaction later) vs PostgreSQL B-Tree (read-optimised). For write-heavy workloads: LSM wins.\n\nFinance context: At Barclays, settlement reconciliation handled 2M write ops per batch window. Kafka → bulk insert with batching reduced write ops by 80%.",
+          "javaCode": null,
+          "pseudoCode": "Write optimisation strategy:\n1. WAL → durability + fast writes (log sequential, apply async)\n2. Batch writes → Kafka consumer → JDBC batch insert\n   PreparedStatement.addBatch() → executeBatch() every N rows\n3. Read replicas → @Transactional(readOnly=true) routes to replica\n4. Sharding → partition by accountId % N shards\n5. CQRS → Command DB (PostgreSQL, normalised)\n           Query DB (Elasticsearch / Redis, denormalised)\n6. LSM Tree → use Cassandra for write-heavy time-series data\n              use PostgreSQL for read-heavy relational data",
+          "tags": ["system-design", "database", "cqrs", "lsm", "wal", "sharding"],
+          "followUps": [
+            "What are the trade-offs of CQRS? (eventual consistency, dual write complexity)",
+            "When would you choose Cassandra over PostgreSQL?",
+            "How does WAL relate to crash recovery?",
+            "What is the write amplification problem in LSM trees?"
+          ],
+          "notes": "Confirmed GS SuperDay Round 2. Always close with your Barclays Kafka batch insert example — real numbers differentiate you."
+        },
+        {
+          "id": "q2",
+          "topic": "Production Incident Response",
+          "difficulty": "medium",
+          "question": "How would you approach a production issue? The interviewer asked about your current system's HLD, possibilities of failure, and your incident response process.",
+          "answer": "5-Step Incident Response — GS expects this structured approach:\n\n1. Triage (2 min): Partial or full outage? What's customer impact? Transaction/revenue loss rate?\n2. Mitigate first (5 min): Rollback last deployment → toggle feature flag off → redirect traffic to healthy pods. Mitigate BEFORE investigating.\n3. Investigate (15 min): APM dashboards (Datadog), Kafka consumer lag, DB connection pool exhaustion, GC pause logs, recent deployment diff\n4. Root cause: Correlate spike with deployment time or traffic anomaly. Apply 5 Whys.\n5. Post-mortem: Timeline, root cause, action items, monitoring gaps filled\n\nFinance SLA at Barclays: detect in <2 min (alerting), mitigate in <5 min (auto failover to secondary), full restore in <30 min. Runbooks for every known failure mode.",
+          "javaCode": null,
+          "pseudoCode": "Incident response timeline:\nT+0:00  Alert fires — PagerDuty\nT+0:02  Incident commander declared, bridge opened\nT+0:05  Mitigate: rollback last deploy / feature flag off\nT+0:15  Investigate: Datadog APM, Kafka lag, DB pool, GC logs\nT+0:30  Root cause identified\nT+1:00  Full restore confirmed\nT+24h   Post-mortem document published\nT+1wk   Action items implemented",
+          "tags": ["system-design", "incident-response", "production", "sla", "monitoring"],
+          "followUps": [
+            "How do you decide when to rollback vs hotfix?",
+            "What metrics do you monitor to detect issues before customers report them?",
+            "How do you design a runbook for a payment processing failure?"
+          ],
+          "notes": "Confirmed GS SuperDay Round 3. 'Mitigate first, investigate second' is the key principle GS is testing."
+        },
+        {
+          "id": "q3",
+          "topic": "Git Branching + CI/CD Pipeline Design",
+          "difficulty": "medium",
+          "question": "Describe your Git branching strategy and CI/CD pipeline design for a real-world financial services project.",
+          "answer": "GS prefers trunk-based development: short-lived feature branches (max 1–2 days), merge to main via PR, feature flags for incomplete work. Why: they deploy thousands of times daily — long-lived branches create merge conflicts at scale.\n\nCI/CD pipeline: commit → unit tests → integration tests → SonarQube analysis → Docker build → staging deploy → production (blue-green deployment).\n\nBanking addition: compliance gate before production — OWASP dependency check, SAST scan (Checkmarx/Veracode), Change Advisory Board (CAB) approval window.",
+          "javaCode": null,
+          "pseudoCode": "CI/CD Pipeline stages:\ncommit\n  → unit tests (JUnit, Mockito)\n  → integration tests (Testcontainers)\n  → SonarQube (coverage gate: >80%)\n  → OWASP dependency check\n  → SAST scan (Checkmarx)\n  → Docker build + push to registry\n  → staging deploy\n  → smoke tests\n  → CAB approval window (banking compliance)\n  → production deploy (blue-green)\n  → canary traffic shift 5% → 25% → 100%",
+          "tags": ["ci-cd", "git", "devops", "trunk-based", "blue-green"],
+          "followUps": [
+            "What is the difference between blue-green and canary deployment?",
+            "How do you handle database schema migrations in CI/CD?",
+            "What is a feature flag and when would you use one vs a branch?"
+          ],
+          "notes": "Confirmed GS SuperDay Round 2. GS specifically picked a component mid-discussion and asked how you'd design it — be ready to zoom in."
+        }
+      ]
+    },
+    {
+      "id": "hm",
+      "label": "Hiring Manager",
+      "overview": "GS HM round is 30–40 minutes covering project architecture deep-dive, behavioural questions, a light coding/design question, and 'Why Goldman Sachs'. The HM specifically probed one candidate's Barclays project — anchor your answers to your banking systems experience.",
+      "tips": [
+        "Prepare your Barclays system deep-dive: what it does, scale numbers, design decisions, and what you'd change today",
+        "Read at least one post on engineering.gs.com before the interview — cite it in your 'Why GS' answer",
+        "Never say 'great brand', 'better pay', or 'prestigious' — be specific about GS engineering problems",
+        "Sprint delay answer: focus on transparency and data-driven communication, not optimism",
+        "Self-critical reflection (what I'd redesign today) is the highest signal for GS HMs — growth mindset"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "topic": "Barclays Project Architecture Deep Dive",
+          "difficulty": "n/a",
+          "question": "Walk me through your recent project architecture — pros, cons, how you handle sprint delays, team conflicts, and feature vs deadline prioritisation.",
+          "answer": "Framework: 2-minute system description → proactive self-critique.\n\nDescribe Barclays system: 'Our payment reconciliation service processes 1M transactions per overnight batch window. It's a Spring Boot microservice consuming from Kafka, writing to PostgreSQL, with a React dashboard for ops. Team of 5.'\n\nThen proactively say what you'd change: '(1) Add Outbox Pattern — we had race conditions between DB commits and Kafka events. (2) CQRS — single DB was a write/read bottleneck during reconciliation + reporting. (3) Distributed tracing from day one — cross-service debugging cost significant man-hours.'\n\nThis self-critical reflection is exactly what GS HMs look for.",
+          "javaCode": null,
+          "pseudoCode": null,
+          "tags": ["behavioral", "architecture", "hm", "barclays"],
+          "followUps": [
+            "What was the biggest technical risk you mitigated in that project?",
+            "How did you convince the team to adopt a design decision they disagreed with?",
+            "What would you have done differently if you had 2x the time?"
+          ],
+          "notes": "GFG report confirms Barclays project was specifically discussed by GS HM. Lead every answer by anchoring to your banking domain."
+        },
+        {
+          "id": "q2",
+          "topic": "Why Goldman Sachs",
+          "difficulty": "n/a",
+          "question": "Why Goldman Sachs? (Always asked — GS specifically screens for genuine interest vs generic answers.)",
+          "answer": "Be specific, not generic. Three components:\n\n1. Domain fit: 'After 4 years at Barclays building payment/risk systems, I want engineering problems at the scale only GS operates at — trillions in daily trading volume.'\n\n2. Specific team interest: 'I'm interested in Markets Technology / Transaction Banking — the system design challenges of low-latency order execution or real-time risk calculation align directly with what I've been building.'\n\n3. Research signal: 'I read GS's engineering blog post on [cite specific post from engineering.gs.com] — the approach to [specific technical detail] is what I'd want to work on.'\n\nNEVER say: 'great brand', 'better pay', 'prestigious', or generic 'I want to grow'.",
+          "javaCode": null,
+          "pseudoCode": null,
+          "tags": ["behavioral", "motivation", "hm"],
+          "followUps": [
+            "Which GS division/team interests you most and why?",
+            "What do you know about how GS's technology stack differs from Barclays?",
+            "Where do you see yourself in 3 years at GS?"
+          ],
+          "notes": "Read engineering.gs.com before the interview. Citing a specific blog post is a strong differentiator."
+        },
+        {
+          "id": "q3",
+          "topic": "Handling Sprint Delays",
+          "difficulty": "n/a",
+          "question": "How do you handle sprint delays? Walk me through a real example.",
+          "answer": "GS values transparency and data-driven communication over optimism.\n\n'I track velocity daily. If I see a delay forming 3+ days before sprint end:\n1. Identify root cause — scope creep, unexpected complexity, or blocking dependency\n2. Inform PM immediately with updated estimate and 3 options: descope non-critical items / negotiate deadline / add short technical spike to de-risk\n3. Never surprise stakeholders at sprint end.\n\nReal example: In our payment gateway integration sprint at Barclays, a third-party API had undocumented rate limits we discovered on day 4. I immediately flagged it, proposed descoping the retry logic to a follow-up sprint, and we shipped the core integration on time with a known limitation documented.'",
+          "javaCode": null,
+          "pseudoCode": null,
+          "tags": ["behavioral", "agile", "communication", "hm"],
+          "followUps": [
+            "What if the PM disagrees with your descoping proposal?",
+            "How do you prevent the same type of delay from recurring?",
+            "How do you balance technical debt vs feature delivery?"
+          ],
+          "notes": "GS specifically tests for 'no surprises' communication culture — proactive escalation is the right answer."
+        },
+        {
+          "id": "q4",
+          "topic": "Design a File Management System",
+          "difficulty": "medium",
+          "question": "Design a file management system — entities, APIs, and storage. Follow-up: concurrent delete of a folder while someone uploads inside it.",
+          "answer": "Entity model: File(id, name, type, size, ownerId, parentFolderId, createdAt, permissions). Folder is a File with type=FOLDER. Tree structure via parentFolderId self-reference.\n\nAPIs:\n• POST /files → upload file\n• GET /files/{id} → download or get metadata\n• PUT /files/{id} → update metadata\n• DELETE /files/{id} → delete file or folder (recursive)\n• GET /folders/{id}/contents → list children\n\nConcurrent delete follow-up: Soft delete + eventual consistency — mark folder as DELETED, background job cleans up children. Or pessimistic lock on the folder row during deletion (SELECT FOR UPDATE). Optimistic: version field, reject upload if folder version changed during upload.",
+          "javaCode": null,
+          "pseudoCode": "Entity:\nFile { id, name, type(FILE|FOLDER), size, ownerId,\n       parentFolderId FK→File.id, permissions, deletedAt }\n\nAPIs:\nPOST   /files              → upload, create File row\nGET    /files/{id}         → stream bytes or metadata\nPUT    /files/{id}         → rename, move (update parentFolderId)\nDELETE /files/{id}         → soft-delete: set deletedAt timestamp\nGET    /folders/{id}/contents → SELECT * WHERE parentFolderId=id AND deletedAt IS NULL\n\nConcurrent delete:\nOption A: SELECT FOR UPDATE on folder during upload tx\nOption B: Soft delete + async cleanup worker\nOption C: Optimistic locking with folder version field",
+          "tags": ["system-design", "file-system", "concurrency", "soft-delete", "hm"],
+          "followUps": [
+            "How would you handle very large file uploads? (Multipart / chunked upload)",
+            "How would you implement folder-level permissions?",
+            "How would you support file versioning / history?"
+          ],
+          "notes": "Confirmed GS HM round. The concurrent delete follow-up is where strong candidates differentiate — soft delete with async cleanup is the cleanest answer."
+        }
+      ]
+    }
+  ]
+}
