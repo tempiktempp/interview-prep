@@ -12,7 +12,7 @@
   ],
   "companies": [
     { "id": "morgan-stanley",  "displayName": "Morgan Stanley",       "tier": "T1", "ctcRange": "₹28–42L",    "domain": "Finance",              "status": "ready" },
-    { "id": "goldman-sachs",   "displayName": "Goldman Sachs",        "tier": "T1", "ctcRange": "₹24–44L",    "domain": "Finance",              "status": "pending" },
+    { "id": "goldman-sachs",   "displayName": "Goldman Sachs",        "tier": "T1", "ctcRange": "₹24–44L",    "domain": "Finance",              "status": "ready" },
     { "id": "jpmorgan-chase",  "displayName": "JPMorgan Chase",       "tier": "T1", "ctcRange": "₹28–42L",    "domain": "Finance",              "status": "pending" },
     { "id": "visa-mastercard", "displayName": "Visa / Mastercard",    "tier": "T1", "ctcRange": "₹26–40L",    "domain": "Payments",             "status": "pending" },
     { "id": "deutsche-citi",   "displayName": "Deutsche Bank / Citi", "tier": "T1", "ctcRange": "₹24–38L",    "domain": "Finance",              "status": "pending" },
