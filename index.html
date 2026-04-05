@@ -252,22 +252,9 @@ async function init() {
 }
 
 function buildSidebar() {
-  const tiers = ["T1","T2","T3"];
-  const html = tiers.map(tier => {
-    const cos = index.companies.filter(c => c.tier === tier);
-    return `<div class="sidebar-label">${tier} — ${tier==="T1"?"Finance":"tier==="T2"?"Fintech / Product":"Global / Remote"}"}</div>` +
-      cos.map(c => `
-        <button class="company-btn" id="cbtn-${c.id}" onclick="selectCompany('${c.id}')">
-          <span class="co-status status-${c.status||'pending'}"></span>
-          <span class="co-name">${c.displayName}</span>
-          <span class="co-tier ${c.tier.toLowerCase()}">${c.tier}</span>
-        </button>`).join("");
-  });
-
-  // simpler rebuild without template literal bug
+  const labels = {"T1":"Finance","T2":"Fintech / Product","T3":"Global / Remote"};
   let out = "";
   ["T1","T2","T3"].forEach(tier => {
-    const labels = {"T1":"Finance","T2":"Fintech / Product","T3":"Global / Remote"};
     out += `<div class="sidebar-label">${labels[tier]}</div>`;
     index.companies.filter(c=>c.tier===tier).forEach(c => {
       out += `<button class="company-btn" id="cbtn-${c.id}" onclick="selectCompany('${c.id}')">
